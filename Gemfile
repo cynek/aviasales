@@ -5,14 +5,16 @@ gem 'rails', '3.2.3'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+#gem 'sqlite3'
 
 gem 'rspec', '~>2.10.0', :group => [:development, :test]
 gem 'rspec-rails', '~>2.10.0', :group => [:development, :test]
 gem 'spork-rails', :group => :test
 gem 'annotate', :git => 'git://github.com/ctran/annotate_models.git'
 gem 'factory_girl_rails'
-#gem 'mongoid'
+gem 'mongoid', '~> 2.4'
+gem "bson_ext", "~> 1.5"
+gem 'mongoid_spacial'
 
 # Gems used only for assets and not required
 # in production environments by default.

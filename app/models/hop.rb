@@ -1,28 +1,15 @@
-# == Schema Information
-#
-# Table name: hops
-#
-#  id          :integer         not null, primary key
-#  latstart    :decimal(8, 6)   not null
-#  lonstart    :decimal(9, 6)   not null
-#  latend      :decimal(8, 6)   not null
-#  lonend      :decimal(9, 6)   not null
-#  date        :datetime        not null
-#  duration    :integer         not null
-#  flight_id   :integer         not null
-#  created_at  :datetime        not null
-#  updated_at  :datetime        not null
-#  prev_hop_id :integer
-#
-
-class Hop < ActiveRecord::Base
-  belongs_to :flight, :counter_cache => true
+class Hop
+  include Mongoid::Document
+  field :start, type: Array
+  field :end, type: Array, spacial: true
+  field :date, type: Time
+  field :duration, type: Integer, default: 0
+  embedded_in :flight, :counter_cache => true
+  recursively_embeds_many
   attr_accessible :date, :duration, :latend, :latstart, :lonend, :lonstart
 
-  belongs_to :prev_hop, :class_name => :Hop
-  after_initialize :set_prev_hop, :if => :new_record?
-  validates_associated :prev_hop
-  #delegate :arrival_time, :to => :prev_hop, :prefix => true, :allow_nil => true
+  after_initialize :set_parent_hop, :if => :new_record?
+  validates_associated :parent_hop
 
   def arrival_time
     self.date + self.duration
@@ -30,9 +17,7 @@ class Hop < ActiveRecord::Base
 
   private
 
-    def set_prev_hop
-      if flight
-        self.prev_hop = flight.hops.last
-      end
+    def set_parent_hop
+      self.parent_hop = flight.hops.last if flight
     end
 end
