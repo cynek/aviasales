@@ -1,10 +1,11 @@
 class Flight
   include Mongoid::Document
   field :price, type: Float
-  field :way_duration, Integer
+  field :way_duration, type: Integer
   attr_accessible :price, :hops_attributes
 
-  embeds_many :hops
+  embeds_many :hops#, cascade_callbacks: true
+  accepts_nested_attributes_for :hops
 
   validates_presence_of :price
   validates_numericality_of :price, greater_than_or_equal_to: 0

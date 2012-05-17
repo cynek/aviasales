@@ -1,4 +1,4 @@
-class HopObserver < ActiveRecord::Observer
+class HopObserver < Mongoid::Observer
   def after_create(hop)
     set_flight_way_duration hop
   end

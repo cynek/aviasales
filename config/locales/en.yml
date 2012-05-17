@@ -3,3 +3,8 @@
 
 en:
   hello: "Hello world"
+  mongoid:
+    errors:
+      messages:
+        is_not_spacial: "is not spacial"
+        spacial_should_not_equal: "should not be equal to %{not_equal}"

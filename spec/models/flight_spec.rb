@@ -1,16 +1,4 @@
-# #encoding: utf-8
-# == Schema Information
-#
-# Table name: flights
-#
-#  id           :integer         not null, primary key
-#  price        :decimal(12, 2)
-#  created_at   :datetime        not null
-#  updated_at   :datetime        not null
-#  hops_count   :integer         default(0), not null
-#  way_duration :integer         default(0), not null
-#
-
+#encoding: utf-8
 require 'spec_helper'
 
 describe Flight do
@@ -20,24 +8,18 @@ describe Flight do
   before do
     @correct_hops_attrs = []
     @correct_hops_attrs[0] =  {
-        :latstart => "11.111111",
-        :lonstart => "111.111111",
-        :latend => "22.222222",
-        :lonend => "222.222222",
+        :start => ["11.111111","111.111111"],
+        :end => ["22.222222","122.222222"],
         :date => Time.now,
         :duration => 3600 }
     @correct_hops_attrs[1] = {
-        :latstart => "22.222222",
-        :lonstart => "222.222222",
-        :latend => "33.333333",
-        :lonend => "333.333333",
+        :start => ["22.222222","122.222222"],
+        :end => ["33.333333","133.333333"],
         :date => Time.now + @correct_hops_attrs[0][:duration],
         :duration => 3600 }
     @correct_hops_attrs[2] = {
-        :latstart => "33.333333",
-        :lonstart => "333.333333",
-        :latend => "44.444444",
-        :lonend => "444.444444",
+        :start => ["33.333333","133.333333"],
+        :end => ["44.444444","144.444444"],
         :date => Time.now + @correct_hops_attrs[1][:duration],
         :duration => 3600 }
     @correct_attr = {

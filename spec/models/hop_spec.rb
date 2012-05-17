@@ -1,31 +1,12 @@
 #encoding: utf-8
-# == Schema Information
-#
-# Table name: hops
-#
-#  id          :integer         not null, primary key
-#  latstart    :decimal(8, 6)   not null
-#  lonstart    :decimal(9, 6)   not null
-#  latend      :decimal(8, 6)   not null
-#  lonend      :decimal(9, 6)   not null
-#  date        :datetime        not null
-#  duration    :integer         not null
-#  flight_id   :integer         not null
-#  created_at  :datetime        not null
-#  updated_at  :datetime        not null
-#  prev_hop_id :integer
-#
-
 require 'spec_helper'
 
 describe Hop do
   before do
     @flight = FactoryGirl.create(:flight)
     @correct_attr = {
-      :latstart => 11.111111,
-      :lonstart => 111.111111,
-      :latend => 22.222222,
-      :lonend => 222.222222,
+      :start => [11.111111,111.111111],
+      :end => [22.222222,122.222222],
       :date => Time.now,
       :duration => 3600
     }
@@ -39,20 +20,38 @@ describe Hop do
     it { subject.arrival_time.should be == subject.date + subject.duration}
   end
 
-  describe "#prev_hop" do
-    describe "если указана предыдущая пересадка" do
-      before do
-        @prev_hop = @flight.hops.create!(@correct_attr.merge(
-          :latstart => @correct_attr[:latend],
-          :lonstart => @correct_attr[:lonend],
-          :latend => @correct_attr[:latstart],
-          :lonend => @correct_attr[:lonstart],
-          :date => @correct_attr[:date] - 2.hours))
-      end
-      it { subject.prev_hop.should be == @prev_hop }
-    end
-    describe "если пересадок не было добавлено" do
-      it { subject.prev_hop.should be_nil }
+  shared_examples_for "spacial" do
+    it { subject.send(:"#{attr}=", []); subject.should be_invalid }
+    it { if respond_to? :not_equal; subject.send(:"#{attr}=", not_equal); subject.should be_invalid; end }
+    it { subject.send(:"#{attr}=", [11.111111]); subject.should be_invalid }
+    it { subject.send(:"#{attr}=", [11.111111, 180.111111]); subject.should be_invalid }
+    it { subject.send(:"#{attr}=", [90.111111, 111.111111]); subject.should be_invalid }
+  end
+  describe "#start" do
+    it_should_behave_like "spacial" do
+      let(:attr) { :start }
+      let(:not_equal) { @correct_attr[:end] }
     end
   end
+
+  describe "#end" do
+    it_should_behave_like 'spacial' do
+      let(:attr) { :end }
+    end
+  end
+
+  #describe "#parent_hop" do
+    #describe "если указана предыдущая пересадка" do
+      #before do
+        #@parent_hop = @flight.hops.create!(@correct_attr.merge(
+          #:start => @correct_attr[:end],
+          #:end => @correct_attr[:start],
+          #:date => @correct_attr[:date] - 2.hours))
+      #end
+      #it { subject.parent_hop.should be == @parent_hop }
+    #end
+    #describe "если пересадок не было добавлено" do
+      #it { subject.parent_hop.should be_nil }
+    #end
+  #end
 end
